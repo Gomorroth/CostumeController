@@ -1,9 +1,12 @@
 {
     "name": "gomoru.su.costume-controller.runtime",
-    "references": [],
+    "rootNamespace": "gomoru.su.CostumeController",
+    "references": [
+        "VRC.SDK3A"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
