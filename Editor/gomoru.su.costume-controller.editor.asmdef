@@ -1,6 +1,11 @@
 {
     "name": "gomoru.su.costume-controller.editor",
-    "references": [ ],
+    "rootNamespace": "gomoru.su.CostumeController",
+    "references": [
+        "gomoru.su.costume-controller.runtime",
+        "nadena.dev.ndmf",
+        "nadena.dev.modular-avatar.core"
+    ],
     "includePlatforms": [
         "Editor"
     ],
