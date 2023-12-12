@@ -1,5 +1,5 @@
 {
-    "name": "vpm-package.runtime",
+    "name": "gomoru.su.costume-controller.runtime",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

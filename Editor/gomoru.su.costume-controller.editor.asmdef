@@ -1,5 +1,5 @@
 {
-    "name": "vpm-package.editor",
+    "name": "gomoru.su.costume-controller.editor",
     "references": [ ],
     "includePlatforms": [
         "Editor"
