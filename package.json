@@ -1,8 +1,13 @@
 {
     "name": "gomoru.su.costume-controller",
     "version": "0.0.0",
-    "displayName": "",
-    "description": "",
+    "unity": "2022.3",
+    "displayName": "Costume Controller",
+    "description": "A simple clothing control generator for VRChat",
     "url": "https://github.com/Gomorroth/CostumeController",
-    "vpmDependencies": {}
+    "vpmDependencies": {
+        "com.vrchat.avatars" : "^3.5.0",
+        "nadena.dev.modular-avatar" : "^1.8.3",
+        "nadena.dev.ndmf" : "^1.2.5"
+    }
 }
