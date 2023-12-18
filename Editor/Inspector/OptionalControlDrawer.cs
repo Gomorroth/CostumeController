@@ -1,4 +1,5 @@
-﻿using gomoru.su.CostumeController.Controls;
+﻿using gomoru.su.CostumeController.Attributes;
+using gomoru.su.CostumeController.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
