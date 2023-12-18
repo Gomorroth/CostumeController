@@ -8,6 +8,6 @@ namespace gomoru.su.CostumeController.Components.Controls
         public bool IsActiveByDefault;
 
         [SerializeReference]
-        public List<IOptionalControl> OptionalControls;
+        public List<OptionalControl> OptionalControls;
     }
 }
