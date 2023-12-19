@@ -2,7 +2,6 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -52,6 +51,21 @@ namespace gomoru.su.CostumeController
             i++;
 
             return string.Join("/", buffer, i, buffer.Length - i);
+        }
+
+        public static bool IsChildren(this GameObject root, GameObject target, System.IO.SearchOption searchOption = System.IO.SearchOption.AllDirectories)
+        {
+            if (searchOption == System.IO.SearchOption.TopDirectoryOnly)
+                return target?.transform?.parent == root.transform;
+
+            var t = target?.transform?.parent;
+            while (t != null)
+            {
+                if (t.gameObject == root)
+                    return true;
+                t = t.parent;
+            }
+            return false;
         }
 
         public static GameObject GetRootObject(this GameObject gameObject)

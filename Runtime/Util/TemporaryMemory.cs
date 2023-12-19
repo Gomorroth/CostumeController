@@ -2,7 +2,6 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace gomoru.su
 {
@@ -47,7 +46,7 @@ namespace gomoru.su
 
             var span = memory.Span;
             int idx = 0;
-            foreach(var x in enumerable)
+            foreach (var x in enumerable)
             {
                 span[idx++] = x;
             }

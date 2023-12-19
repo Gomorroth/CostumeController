@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using gomoru.su.CostumeController.Attributes;
+using System;
 
 namespace gomoru.su.CostumeController
 {
@@ -9,4 +8,8 @@ namespace gomoru.su.CostumeController
     {
         public TargetObject Target;
     }
+
+    [Serializable]
+    [ForceAbsolutePath]
+    public abstract class AbsolutePathOptionalControl : OptionalControl { }
 }

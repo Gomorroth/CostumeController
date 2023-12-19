@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace gomoru.su.CostumeController
 {
-    internal static class GUIUtils
+    internal static partial class GUIUtils
     {
-        private static GUIContent _tempContent; 
+        private static GUIContent _tempContent;
 
         public static GUIContent ToGUIContent(this string text, string toolTip = null, Texture image = null)
         {
