@@ -8,8 +8,4 @@ namespace gomoru.su.CostumeController
     {
         public TargetObject Target;
     }
-
-    [Serializable]
-    [ForceAbsolutePath]
-    public abstract class AbsolutePathOptionalControl : OptionalControl { }
 }

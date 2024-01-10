@@ -3,7 +3,7 @@ using VRC.SDKBase;
 
 namespace gomoru.su.CostumeController
 {
-    public abstract class CCComponentBase : MonoBehaviour, IEditorOnly
+    public abstract class CCBaseComponent : MonoBehaviour, IEditorOnly
     {
     }
 }

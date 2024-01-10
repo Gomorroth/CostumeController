@@ -4,7 +4,7 @@ using UnityEngine;
 namespace gomoru.su.CostumeController.Components.Controls
 {
     [AddComponentMenu("Costume Controller/Control/CC Costume Control")]
-    public sealed class CCCostumeControl : CCComponentBase, IControl
+    public sealed class CCCostumeControl : CCBaseComponent, IControl, IControlTargetProvider
     {
         public int HashCode;
 
@@ -12,5 +12,10 @@ namespace gomoru.su.CostumeController.Components.Controls
 
         [SerializeReference]
         public List<OptionalControl> OptionalControls;
+
+        public void GetControlTargets(ref ValueList<GameObject> destination)
+        {
+            destination.AddRange(Items.AsSpan());
+        }
     }
 }
