@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using gomoru.su.CostumeController.Components.Controls;
 using gomoru.su.CostumeController.Controls;
+using gomoru.su.CostumeController.SourceGenerator;
 using UnityEditor;
 using UnityEngine;
 
