@@ -6,6 +6,6 @@ namespace gomoru.su.CostumeController
     [Serializable]
     public abstract class OptionalControl
     {
-        public TargetObject Target;
+        public TargetObject TargetObject;
     }
 }

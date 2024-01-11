@@ -32,5 +32,15 @@ namespace gomoru.su.CostumeController
 
             public void Dispose() => MemoryMarshal.GetReference(_isChanged) = EditorGUI.EndChangeCheck();
         }
+
+        public ref struct DisableScope
+        {
+            public DisableScope(bool disabled)
+            {
+                EditorGUI.BeginDisabledGroup(disabled);
+            }
+
+            public void Dispose() => EditorGUI.EndDisabledGroup();
+        }
     }
 }

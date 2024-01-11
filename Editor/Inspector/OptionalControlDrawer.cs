@@ -1,84 +1,89 @@
 ﻿using gomoru.su.CostumeController.Attributes;
 using gomoru.su.CostumeController.Controls;
+using System;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace gomoru.su.CostumeController
 {
-    [CustomPropertyDrawer(typeof(OptionalControl), true)]
-    internal sealed class OptionalControlDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(OptionalControl))]
+    internal class OptionalControlDrawer : PropertyDrawer
     {
-        private static readonly string[] _controlLabels = new[] { "None", "Blendshape", "Material", "Color", };
+        protected const float Margin = 2;
 
-        public static float GetPropertyHeight(SerializedProperty property)
+        protected virtual int LineCount { get; } = 0;
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            float height = EditorGUIUtility.singleLineHeight;
-            if (property.boxedValue is BlendshapeControl)
+            var x = EditorGUIUtility.singleLineHeight;
+            if (property.isExpanded)
             {
-                height += BlendshapeDrawer.GetPropertyHeight(property);
+                x += (Margin + EditorGUIUtility.singleLineHeight) * LineCount + 1;
             }
-            return height;
+
+            return x;
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) => GetPropertyHeight(property);
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) => OnGUI(ref position, property, label);
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public void OnGUI(ref Rect position, SerializedProperty property, GUIContent label)
         {
             position.height = EditorGUIUtility.singleLineHeight;
+            //position.y += Margin;
             var value = property.boxedValue;
-            int idx = value switch
-            {
-                BlendshapeControl => 1,
-                MaterialControl => 2,
-                ColorControl => 3,
-                _ => 0,
-            };
+            int idx = value is null ? 0 : OptionalControls.Types.IndexOf(value.GetType()) + 1;
             EditorGUI.showMixedValue = property.hasMultipleDifferentValues;
-            EditorGUI.BeginChangeCheck();
-            idx = EditorGUI.Popup(position, idx, _controlLabels);
-            if (EditorGUI.EndChangeCheck())
+            
+            var pos = position;
+            pos.x += Margin;
+            pos.width -= Margin;
+
+            if (GUIUtils.ChangeCheck(ref idx, () => EditorGUI.Popup(pos, idx, OptionalControls.Labels)))
             {
-                property.boxedValue = idx switch
-                {
-                    1 => new BlendshapeControl(),
-                    2 => new MaterialControl(),
-                    3 => new ColorControl(),
-                    _ => null,
-                };
+                property.boxedValue = idx == 0 ? null : Instanciator.Create(OptionalControls.Types[idx - 1]);
+                property.isExpanded = idx != 0;
             }
             EditorGUI.showMixedValue = false;
 
-            if (idx == 0)
-                return;
-
-            position.y += EditorGUIUtility.singleLineHeight;
-
-            if (fieldInfo.GetCustomAttribute<HideInInspector>() is null)
+            if (idx != 0)
             {
-                EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(OptionalControl.Target)));
-                position.y += EditorGUIUtility.singleLineHeight;
+                property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, GUIContent.none);
             }
 
-            if (idx == 1)
-                BlendshapeDrawer.OnGUI(position, property, label);
+            NewLine(ref position);
         }
 
-        internal static class BlendshapeDrawer
+        protected static void NewLine(ref Rect position)
         {
-            public static float GetPropertyHeight(SerializedProperty property)
-            {
-                float count = 2;
+            position.y += EditorGUIUtility.singleLineHeight + Margin;
+        }
+    }
 
-                return EditorGUIUtility.singleLineHeight * count;
-            }
+    [CustomPropertyDrawer(typeof(BlendshapeControl))]
+    internal sealed class BlendshapeDrawer : OptionalControlDrawer
+    {
+        protected override int LineCount => 4;
 
-            public static void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-            {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            base.OnGUI(ref position, property, label);
+            if (!property.isExpanded || property.managedReferenceValue is not BlendshapeControl)
+                return;
 
-                EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(BlendshapeControl.Blendshape)));
+            Draw(position, property);
+        }
 
-            }
+        public static void Draw(Rect position, SerializedProperty property)
+        {
+            EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(BlendshapeControl.Blendshape)));
+            NewLine(ref position);
+
+            EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(BlendshapeControl.Disabled)));
+            NewLine(ref position);
+
+            EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(BlendshapeControl.Enabled)));
         }
     }
 
