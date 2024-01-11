@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace gomoru.su.CostumeController
 {
@@ -7,5 +8,13 @@ namespace gomoru.su.CostumeController
     {
         public string Path;
         public bool IsAbsolute;
+
+        public GameObject GetTargetGameObject(GameObject container)
+        {
+            if (container == null)
+                return null;
+            var root = IsAbsolute ? container.GetRootObject() : container;
+            return root.Find(Path);
+        }
     }
 }

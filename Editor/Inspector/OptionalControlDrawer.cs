@@ -1,10 +1,13 @@
 ﻿using gomoru.su.CostumeController.Attributes;
 using gomoru.su.CostumeController.Controls;
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace gomoru.su.CostumeController
 {
@@ -59,6 +62,49 @@ namespace gomoru.su.CostumeController
         {
             position.y += EditorGUIUtility.singleLineHeight + Margin;
         }
+
+        public static void DrawTargetObject(Rect position, SerializedProperty property, GameObject container = null, Type filterType = null)
+        {
+            var fieldRect = position;
+            var popupRect = position;
+            popupRect.width = GUIUtils.CalcSize("Absolute ", EditorStyles.popup).Width;
+            fieldRect.width -= popupRect.width + Margin;
+            popupRect.x += fieldRect.width + Margin;
+
+
+            var target = container == null ? null : (property.boxedValue as TargetObject).GetTargetGameObject(container);
+            var pathProp = property.FindPropertyRelative(nameof(TargetObject.Path));
+            var isAbsoluteProp = property.FindPropertyRelative(nameof(TargetObject.IsAbsolute));
+            if (target != null)
+            {
+                EditorGUI.BeginChangeCheck();
+                var result = EditorGUI.ObjectField(fieldRect, "", target, filterType ?? typeof(GameObject), true);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    GameObject obj = result switch
+                    {
+                        GameObject x => x,
+                        Component x => x.gameObject,
+                        _ => null,
+                    };
+
+                    if (obj != null)
+                    {
+                        if (!container.IsChildren(obj))
+                        {
+                            isAbsoluteProp.boolValue = true;
+                        }
+                        pathProp.stringValue = obj.GetRelativePath(isAbsoluteProp.boolValue ? container.GetRootObject() : container);
+                    }
+                }
+            }
+            else
+            {
+                EditorGUI.PropertyField(fieldRect, pathProp, GUIContent.none);
+            }
+
+            GUIUtils.ChangeCheck<bool>(property.FindPropertyRelative(nameof(TargetObject.IsAbsolute)), x => EditorGUI.Popup(popupRect, x ? 1 : 0, new[] { "Relative", "Absolute" }) == 1);
+        }
     }
 
     [CustomPropertyDrawer(typeof(BlendshapeControl))]
@@ -77,6 +123,11 @@ namespace gomoru.su.CostumeController
 
         public static void Draw(Rect position, SerializedProperty property)
         {
+            var targetObjectProp = property.FindPropertyRelative(nameof(BlendshapeControl.TargetObject));
+            var rootObj = (property.serializedObject.targetObject as Component)?.gameObject;
+            DrawTargetObject(position, targetObjectProp, rootObj, typeof(SkinnedMeshRenderer));
+            NewLine(ref position);
+
             EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(BlendshapeControl.Blendshape)));
             NewLine(ref position);
 
