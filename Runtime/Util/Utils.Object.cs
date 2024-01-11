@@ -1,28 +1,10 @@
 ﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace gomoru.su.CostumeController
 {
-    internal static class RuntimeUtils
+    partial class Utils
     {
-        public static void MarkDirty(this Object obj)
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(obj);
-#endif
-        }
-
-        public static void RecordObject(Object obj, string name)
-        {
-#if UNITY_EDITOR
-            UnityEditor.Undo.RegisterCompleteObjectUndo(obj, name);
-#endif
-        }
-
         [ThreadStatic]
         private static string[] _relativePathBuffer;
 
@@ -86,38 +68,5 @@ namespace gomoru.su.CostumeController
             return obj?.transform.Find(path)?.gameObject;
         }
 
-        public static bool Contains<T>(this List<T> list, Predicate<T> condition)
-        {
-            foreach (var item in list.AsSpan())
-            {
-                if (condition(item))
-                    return true;
-            }
-            return false;
-        }
-
-        public static int IndexOf<T>(this Span<T> span, Predicate<T> condition) => ((ReadOnlySpan<T>)span).IndexOf(condition);
-
-        public static int IndexOf<T>(this ReadOnlySpan<T> span, Predicate<T> condition)
-        {
-            for (int i = 0; i < span.Length; i++)
-            {
-                if (condition(span[i]))
-                    return i;
-            }
-            return -1;
-        }
-
-        public static Span<T> AsSpan<T>(this List<T> list)
-        {
-            var dummy = Unsafe.As<DummyList<T>>(list);
-            return dummy.Array.AsSpan(0, list.Count);
-        }
-
-        private sealed class DummyList<T>
-        {
-            public T[] Array;
-            public int Count;
-        }
     }
 }
