@@ -13,9 +13,9 @@ namespace gomoru.su.CostumeController.Inspector
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(OptionalControllerBase.IsActiveByDefault)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(ControllerBase.IsActiveByDefault)));
             OnGUIInternal();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(OptionalControllerBase.OptionalControls)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(ControllerBase.OptionalControls)));
             serializedObject.ApplyModifiedProperties();
         }
 

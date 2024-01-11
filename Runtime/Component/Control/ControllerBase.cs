@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace gomoru.su.CostumeController.Components.Controls
 {
-    public abstract class OptionalControllerBase : CCBaseComponent, IControl
+    public abstract class ControllerBase : CCBaseComponent, IControl
     {
         public bool IsActiveByDefault;
 
