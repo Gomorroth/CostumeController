@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace gomoru.su.CostumeController
 {
-    internal static partial class Utils
+    internal static partial class RuntimeUtils
     {
     }
 }

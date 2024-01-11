@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace gomoru.su.CostumeController
 {
-    partial class Utils
+    partial class RuntimeUtils
     {
         public static Span<T> AsSpan<T>(this List<T> list)
         {

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace gomoru.su.CostumeController
 {
-    partial class Utils
+    partial class RuntimeUtils
     {
         public static ReadOnlySpan<TComponent> FindComponents<TComponent>(this Component component) where TComponent : Component
             => component.GetComponents<TComponent>();

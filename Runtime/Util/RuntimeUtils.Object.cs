@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace gomoru.su.CostumeController
 {
-    partial class Utils
+    partial class RuntimeUtils
     {
         [ThreadStatic]
         private static string[] _relativePathBuffer;
