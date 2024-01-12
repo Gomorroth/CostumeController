@@ -61,5 +61,19 @@ namespace gomoru.su.CostumeController
             }
             return result;
         }
+
+        public static void WithContextMenu<TState>(Rect position, TState state, Action<Rect, TState> drawControl, Action<GenericMenu> registerMenu)
+        {
+            if (Event.current.type == EventType.ContextClick)
+            {
+                if (position.Contains(Event.current.mousePosition))
+                {
+                    var menu = new GenericMenu();
+                    registerMenu(menu);
+                    menu.ShowAsContext();
+                }
+            }
+            drawControl(position, state);
+        }
     }
 }
