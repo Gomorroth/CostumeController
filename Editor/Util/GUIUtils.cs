@@ -1,11 +1,14 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace gomoru.su.CostumeController
 {
     internal static partial class GUIUtils
     {
+        public static readonly GUIStyle ObjectFieldButtonStyle = typeof(EditorStyles).GetProperty("objectFieldButton", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetMethod.Invoke(null, null) as GUIStyle;
+
         private static GUIContent _tempContent;
 
         public static GUIContent ToGUIContent(this string text, string toolTip = null, Texture image = null)
@@ -35,6 +38,28 @@ namespace gomoru.su.CostumeController
             var ret = func(typed.Value);
             if (EditorGUI.EndChangeCheck())
                 typed.Value = ret;
+        }
+
+        public static bool DrawControlWithSelectionButton(Rect position, Action<Rect> drawControl) => DrawControlWithSelectionButton(position, drawControl, static (pos, action) => action(pos));
+
+        public static bool DrawControlWithSelectionButton<TState>(Rect position, TState state, Action<Rect, TState> drawControl, bool? enabled = null)
+        {
+            var origPos = position;
+            position.x += position.width - EditorGUIUtility.singleLineHeight;
+            position.width = EditorGUIUtility.singleLineHeight;
+            EditorGUIUtility.AddCursorRect(position, MouseCursor.Arrow);
+            position = ObjectFieldButtonStyle.margin.Remove(position);
+            bool disabled = !(enabled ?? GUI.enabled);
+            EditorGUI.BeginDisabledGroup(disabled);
+            bool result = GUI.Button(position, GUIContent.none, GUIStyle.none);
+            EditorGUI.EndDisabledGroup();
+            drawControl(origPos, state);
+            
+            if (Event.current.type == EventType.Repaint)
+            {
+                ObjectFieldButtonStyle.Draw(position, GUIContent.none, 0, !disabled, !disabled && position.Contains(Event.current.mousePosition));
+            }
+            return result;
         }
     }
 }

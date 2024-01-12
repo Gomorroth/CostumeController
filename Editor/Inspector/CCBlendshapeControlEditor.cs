@@ -39,8 +39,9 @@ namespace gomoru.su.CostumeController.Inspector
     {
         protected override void OnGUIInternal()
         {
-            //var properties = BlendshapeControl.SerializedProperties.Create(serializedObject.FindProperty(nameof(CCBlendshapeControl.Control)));
-            EditorGUILayout.PropertyField(SerializedControl.FindPropertyRelative(nameof(BlendshapeControl.Enabled)));
+            var position = EditorGUILayout.GetControlRect(false, (OptionalControlDrawer.Margin + EditorGUIUtility.singleLineHeight) * 3);
+            BlendshapeControlDrawer.Default.Draw(position, SerializedControl, false);
+
         }
     }
 }
