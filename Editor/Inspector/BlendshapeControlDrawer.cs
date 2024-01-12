@@ -47,7 +47,7 @@ namespace gomoru.su.CostumeController
                 {
                     blendshapeProp.stringValue = targetMesh.GetBlendShapeName(i);
                     blendshapeProp.serializedObject.ApplyModifiedProperties();
-                });
+                }, "Select Blendshape");
             }
 
             NewLine(ref position);

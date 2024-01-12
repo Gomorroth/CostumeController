@@ -23,7 +23,7 @@ namespace gomoru.su.CostumeController
 
         private Vector2 scrollPosition;
 
-        public static void Show<T>(IEnumerable<T> items, Action<int> callback)
+        public static void Show<T>(IEnumerable<T> items, Action<int> callback, string title = null)
         {
             using var list =
                 typeof(T).IsValueType &&
@@ -36,10 +36,10 @@ namespace gomoru.su.CostumeController
                 list.Add(item);
             }
 
-            Show<T>(list.Span, callback);
+            Show<T>(list.Span, callback, title);
         }
 
-        public static void Show<T>(ReadOnlySpan<T> items, Action<int> callback)
+        public static void Show<T>(ReadOnlySpan<T> items, Action<int> callback, string title = null)
         {
             var window = Current;
             if (window == null)
@@ -48,7 +48,7 @@ namespace gomoru.su.CostumeController
             }
 
             window.Initialize(items, callback);
-
+            window.titleContent = new(title ?? "Select");
             window.Show();
         }
 
