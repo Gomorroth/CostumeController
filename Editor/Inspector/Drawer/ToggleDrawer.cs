@@ -6,6 +6,8 @@ namespace gomoru.su.CostumeController
     [CustomPropertyDrawer(typeof(Toggle<>))]
     internal sealed class ToggleDrawer : PropertyDrawer
     {
+        private static readonly GUIContent[] onoffLabels = new GUIContent[] { new("OFF"), new("ON") };
+        
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             using var _ = new GUIUtils.PropertyScope(position, property, ref label);
@@ -35,6 +37,8 @@ namespace gomoru.su.CostumeController
 
                 if (valueProperty.propertyType == SerializedPropertyType.Float)
                     GUIUtils.ChangeCheck<float>(valueProperty, value => EditorGUI.Slider(fieldRect, value, 0, 1));
+                else if (valueProperty.propertyType == SerializedPropertyType.Boolean)
+                    GUIUtils.ChangeCheck<bool>(valueProperty, value => EditorGUI.Popup(fieldRect, value ? 1 : 0, onoffLabels) != 0);
                 else 
                     EditorGUI.PropertyField(fieldRect, valueProperty, GUIContent.none);
 
