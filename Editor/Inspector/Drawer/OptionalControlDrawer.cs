@@ -2,6 +2,7 @@
 using gomoru.su.CostumeController.Controls;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace gomoru.su.CostumeController
 {
@@ -10,7 +11,18 @@ namespace gomoru.su.CostumeController
     {
         public const float Margin = 2;
 
+        public virtual bool ShowTargetObjectField { get; set; } = true;
+
         public virtual float GetPropertyCount(SerializedProperty property, GUIContent label) => 0;
+
+        public float GetPropertyCountWithoutTargetObjectField(SerializedProperty property, GUIContent label)
+        {
+            bool prev = ShowTargetObjectField;
+            ShowTargetObjectField = false;
+            var result = GetPropertyCount(property, label);
+            ShowTargetObjectField = prev;
+            return result;
+        }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
@@ -52,7 +64,15 @@ namespace gomoru.su.CostumeController
             NewLine(ref position);
         }
 
-        public virtual void Draw(Rect position, SerializedProperty property, bool showTargetObject = true) { }
+        public virtual void Draw(Rect position, SerializedProperty property) { }
+
+        public void DrawWithoutTargetObjectField(Rect position, SerializedProperty property)
+        {
+            bool prev = ShowTargetObjectField;
+            ShowTargetObjectField = false;
+            Draw(position, property);
+            ShowTargetObjectField = prev;
+        }
 
         protected static void NewLine(ref Rect position)
         {

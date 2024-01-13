@@ -7,18 +7,18 @@ namespace gomoru.su.CostumeController
     [CustomPropertyDrawer(typeof(MaterialControl))]
     internal sealed class MaterialControlDrawer : OptionalControlDrawer<MaterialControl, MaterialControlDrawer>
     {
-        public override float GetPropertyCount(SerializedProperty property, GUIContent label) => 4;
+        public override float GetPropertyCount(SerializedProperty property, GUIContent label) => ShowTargetObjectField ? 4 : 3;
 
         private GUIContent[] labelCache;
         private GameObject previousTargetObject;
 
-        public override void Draw(Rect position, SerializedProperty property, bool showTargetObject = true)
+        public override void Draw(Rect position, SerializedProperty property)
         {
             var targetObjectProp = property.FindPropertyRelative(nameof(OptionalControl.TargetObject));
             var rootObj = (property.serializedObject.targetObject as Component)?.gameObject;
             position.height = EditorGUIUtility.singleLineHeight;
 
-            if (showTargetObject)
+            if (ShowTargetObjectField)
             {
                 DrawTargetObject(position, targetObjectProp, rootObj, typeof(SkinnedMeshRenderer));
                 NewLine(ref position);

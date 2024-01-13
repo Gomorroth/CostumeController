@@ -8,15 +8,15 @@ namespace gomoru.su.CostumeController
     [CustomPropertyDrawer(typeof(BlendshapeControl))]
     internal sealed class BlendshapeControlDrawer : OptionalControlDrawer<BlendshapeControl, BlendshapeControlDrawer>
     {
-        public override float GetPropertyCount(SerializedProperty property, GUIContent label) => 4;
+        public override float GetPropertyCount(SerializedProperty property, GUIContent label) => ShowTargetObjectField ? 4 : 3;
 
-        public override void Draw(Rect position, SerializedProperty property, bool showTargetObject = true)
+        public override void Draw(Rect position, SerializedProperty property)
         {
             var targetObjectProp = property.FindPropertyRelative(nameof(BlendshapeControl.TargetObject));
             var rootObj = (property.serializedObject.targetObject as Component)?.gameObject;
             position.height = EditorGUIUtility.singleLineHeight;
 
-            if (showTargetObject)
+            if (ShowTargetObjectField)
             {
                 DrawTargetObject(position, targetObjectProp, rootObj, typeof(SkinnedMeshRenderer));
                 NewLine(ref position);

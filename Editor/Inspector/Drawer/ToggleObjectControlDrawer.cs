@@ -7,15 +7,15 @@ namespace gomoru.su.CostumeController
     [CustomPropertyDrawer(typeof(ToggleObjectControl))]
     internal sealed class ToggleObjectControlDrawer : OptionalControlDrawer<ToggleObjectControl, ToggleObjectControlDrawer>
     {
-        public override float GetPropertyCount(SerializedProperty property, GUIContent label) => 3;
+        public override float GetPropertyCount(SerializedProperty property, GUIContent label) => ShowTargetObjectField ? 3 : 2;
 
-        public override void Draw(Rect position, SerializedProperty property, bool showTargetObject = true)
+        public override void Draw(Rect position, SerializedProperty property)
         {
             var targetObjectProp = property.FindPropertyRelative(nameof(OptionalControl.TargetObject));
             var rootObj = (property.serializedObject.targetObject as Component)?.gameObject;
             position.height = EditorGUIUtility.singleLineHeight;
 
-            if (showTargetObject)
+            if (ShowTargetObjectField)
             {
                 DrawTargetObject(position, targetObjectProp, rootObj, typeof(GameObject));
                 NewLine(ref position);
