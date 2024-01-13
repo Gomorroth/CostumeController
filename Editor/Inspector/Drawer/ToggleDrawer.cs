@@ -34,7 +34,9 @@ namespace gomoru.su.CostumeController
                 EditorGUI.showMixedValue = enableProperty.hasMultipleDifferentValues;
 
                 if (valueProperty.propertyType == SerializedPropertyType.Float)
-                GUIUtils.ChangeCheck<float>(valueProperty, value => EditorGUI.Slider(fieldRect, value, 0, 1));
+                    GUIUtils.ChangeCheck<float>(valueProperty, value => EditorGUI.Slider(fieldRect, value, 0, 1));
+                else 
+                    EditorGUI.PropertyField(fieldRect, valueProperty, GUIContent.none);
 
                 EditorGUI.showMixedValue = false;
             }
