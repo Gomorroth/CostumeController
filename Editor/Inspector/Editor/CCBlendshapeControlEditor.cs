@@ -5,12 +5,7 @@ using UnityEditor;
 namespace gomoru.su.CostumeController.Inspector
 {
     [CustomEditor(typeof(CCBlendshapeControl))]
-    internal sealed class CCBlendshapeControlEditor : OptionalControllerEditorBase<BlendshapeControl>
+    internal sealed class CCBlendshapeControlEditor : OptionalControllerEditorBase<BlendshapeControl, BlendshapeControlDrawer>
     {
-        protected override void OnInnerGUI()
-        {
-            var position = EditorGUILayout.GetControlRect(false, (OptionalControlDrawer.Margin + EditorGUIUtility.singleLineHeight) * 3);
-            BlendshapeControlDrawer.Default.Draw(position, SerializedControl, false);
-        }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using gomoru.su.CostumeController.Components.Controls;
 using UnityEditor;
+using UnityEngine;
 
 namespace gomoru.su.CostumeController.Inspector
 {
-    internal abstract class OptionalControllerEditorBase<T> : Editor where T : OptionalControl
+    internal abstract class OptionalControllerEditorBase<TControl, TDrawer> : Editor where TControl : OptionalControl where TDrawer : OptionalControlDrawer<TControl, TDrawer>, new()
     {
         public override void OnInspectorGUI()
         {
@@ -27,7 +28,12 @@ namespace gomoru.su.CostumeController.Inspector
             serializedObject.ApplyModifiedProperties();
         }
 
-        protected abstract void OnInnerGUI();
+        protected virtual void OnInnerGUI()
+        {
+            var instance = Singleton<TDrawer>.Instance;
+            var position = EditorGUILayout.GetControlRect(false, (OptionalControlDrawer.Margin + EditorGUIUtility.singleLineHeight) * instance.GetPropertyCountWithoutTargetObjectField(SerializedControl, GUIContent.none));
+            instance.DrawWithoutTargetObjectField(position, SerializedControl);
+        }
 
         private SerializedProperty serializedControl;
         protected SerializedProperty SerializedControl
@@ -35,7 +41,7 @@ namespace gomoru.su.CostumeController.Inspector
             get
             {
                 if (serializedControl == null)
-                    serializedControl = serializedObject.FindProperty(nameof(OptionalControllerBase<T>.Control));
+                    serializedControl = serializedObject.FindProperty(nameof(OptionalControllerBase<TControl>.Control));
                 return serializedControl;
             }
         }
