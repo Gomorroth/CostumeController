@@ -6,20 +6,9 @@ using UnityEngine;
 namespace gomoru.su.CostumeController
 {
     [CustomPropertyDrawer(typeof(BlendshapeControl))]
-    internal sealed class BlendshapeControlDrawer : OptionalControlDrawer
+    internal sealed class BlendshapeControlDrawer : OptionalControlDrawer<BlendshapeControl, BlendshapeControlDrawer>
     {
-        public static BlendshapeControlDrawer Default => Singleton<BlendshapeControlDrawer>.Instance;
-
         public override float GetPropertyCount(SerializedProperty property, GUIContent label) => 4;
-
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            base.OnGUI(ref position, property, label);
-            if (!property.isExpanded || property.boxedValue is not BlendshapeControl)
-                return;
-
-            Draw(position, property);
-        }
 
         public override void Draw(Rect position, SerializedProperty property, bool showTargetObject = true)
         {
@@ -58,5 +47,4 @@ namespace gomoru.su.CostumeController
             EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(BlendshapeControl.Enabled)));
         }
     }
-
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using gomoru.su.CostumeController.Controls;
 using UnityEditor;
 using UnityEngine;
 
@@ -102,4 +103,22 @@ namespace gomoru.su.CostumeController
         }
     }
 
+    internal abstract class OptionalControlDrawer<TControl, TDrawer> : OptionalControlDrawer
+        where TControl : OptionalControl
+        where TDrawer : OptionalControlDrawer<TControl, TDrawer>, new()
+    {
+        public static TDrawer Default => Singleton<TDrawer>.Instance;
+
+        protected virtual bool CheckPropertyDrawable(SerializedProperty property)
+            => property.isExpanded && property.boxedValue is TControl;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            base.OnGUI(ref position, property, label);
+            if (!CheckPropertyDrawable(property))
+                return;
+
+            Draw(position, property);
+        }
+    }
 }

@@ -1,27 +1,13 @@
-﻿using System.Runtime.CompilerServices;
-using gomoru.su.CostumeController.Controls;
+﻿using gomoru.su.CostumeController.Controls;
 using UnityEditor;
 using UnityEngine;
-
-[assembly:InternalsVisibleTo("gomoru.su.costume-controller.runtime")]
 
 namespace gomoru.su.CostumeController
 {
     [CustomPropertyDrawer(typeof(MaterialControl))]
-    internal sealed class MaterialControlDrawer : OptionalControlDrawer
+    internal sealed class MaterialControlDrawer : OptionalControlDrawer<MaterialControl, MaterialControlDrawer>
     {
-        public static MaterialControlDrawer Default => Singleton<MaterialControlDrawer>.Instance;
-
         public override float GetPropertyCount(SerializedProperty property, GUIContent label) => 4;
-
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            base.OnGUI(ref position, property, label);
-            if (!property.isExpanded || property.boxedValue is not MaterialControl)
-                return;
-
-            Draw(position, property);
-        }
 
         private GUIContent[] labelCache;
         private GameObject previousTargetObject;
