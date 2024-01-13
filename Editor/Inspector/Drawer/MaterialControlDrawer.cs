@@ -1,4 +1,5 @@
-﻿using gomoru.su.CostumeController.Controls;
+﻿using System.Linq;
+using gomoru.su.CostumeController.Controls;
 using UnityEditor;
 using UnityEngine;
 
@@ -50,6 +51,45 @@ namespace gomoru.su.CostumeController
             }
 
 
+            NewLine(ref position);
+
+            EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(ControlBase<object>.Disabled)));
+            NewLine(ref position);
+
+            EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(ControlBase<object>.Enabled)));
+        }
+    }
+
+    [CustomPropertyDrawer(typeof(ColorControl))]
+    internal sealed class ColorControlDrawer : OptionalControlDrawer<ColorControl, ColorControlDrawer>
+    {
+        public override float GetPropertyCount(SerializedProperty property, GUIContent label) => ShowTargetObjectField ? 4 : 3;
+
+        public override void Draw(Rect position, SerializedProperty property)
+        {
+            var targetObjectProp = property.FindPropertyRelative(nameof(OptionalControl.TargetObject));
+            var rootObj = (property.serializedObject.targetObject as Component)?.gameObject;
+            position.height = EditorGUIUtility.singleLineHeight;
+
+            if (ShowTargetObjectField)
+            {
+                DrawTargetObject(position, targetObjectProp, rootObj, typeof(Renderer));
+                NewLine(ref position);
+            }
+
+            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetTargetGameObject(rootObj);
+            var targetRenderer = targetObj == null ? null : targetObj.GetComponent<Renderer>();
+            var targetMaterials = targetRenderer == null ? null : targetRenderer.sharedMaterials;
+
+            var propertyNameProp = property.FindPropertyRelative(nameof(ColorControl.PropertyName));
+
+            if (GUIUtils.DrawControlWithSelectionButton(position, propertyNameProp, 
+                (position, property) => EditorGUI.PropertyField(position, property), 
+                targetMaterials.Where(x => x != null).Any()))
+            {
+                var items = targetMaterials.SelectMany(x => x.GetPropertyNames(MaterialPropertyType.Vector)).Select(x => ObjectNames.NicifyVariableName(x)).OrderBy(x => x).ToArray();
+                SelectionWindow.Show(items, index => { propertyNameProp.stringValue = items[index]; propertyNameProp.serializedObject.ApplyModifiedProperties(); });
+            }
             NewLine(ref position);
 
             EditorGUI.PropertyField(position, property.FindPropertyRelative(nameof(ControlBase<object>.Disabled)));

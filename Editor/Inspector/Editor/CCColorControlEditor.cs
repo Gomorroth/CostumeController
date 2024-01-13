@@ -4,6 +4,6 @@ using UnityEditor;
 
 namespace gomoru.su.CostumeController.Inspector
 {
-    [CustomEditor(typeof(CCBlendshapeControl))]
-    internal sealed class CCBlendshapeControlEditor : OptionalControllerEditorBase<BlendshapeControl, BlendshapeControlDrawer> { }
+    [CustomEditor(typeof(CCColorControl))]
+    internal sealed class CCColorControlEditor : OptionalControllerEditorBase<ColorControl, ColorControlDrawer> { }
 }

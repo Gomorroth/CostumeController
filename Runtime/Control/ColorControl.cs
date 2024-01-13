@@ -7,6 +7,5 @@ namespace gomoru.su.CostumeController.Controls
     public class ColorControl : ControlBase<Color>
     {
         public string PropertyName;
-        public ColorField Include = (ColorField)(-1);
     }
 }
