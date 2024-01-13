@@ -73,7 +73,7 @@ namespace gomoru.su.CostumeController
             if (target != null)
             {
                 EditorGUI.BeginChangeCheck();
-                var result = EditorGUI.ObjectField(fieldRect, "", target, filterType ?? typeof(GameObject), true);
+                var result = EditorGUI.ObjectField(fieldRect, "Target Object", target, filterType ?? typeof(GameObject), true);
                 if (EditorGUI.EndChangeCheck())
                 {
                     GameObject obj = result switch
@@ -95,7 +95,7 @@ namespace gomoru.su.CostumeController
             }
             else
             {
-                EditorGUI.PropertyField(fieldRect, pathProp, GUIContent.none);
+                EditorGUI.PropertyField(fieldRect, pathProp, "Target Object".ToGUIContent());
             }
 
             GUIUtils.ChangeCheck<bool>(property.FindPropertyRelative(nameof(TargetObject.IsAbsolute)), x => EditorGUI.Popup(popupRect, x ? 1 : 0, new[] { "Relative", "Absolute" }) == 1);
