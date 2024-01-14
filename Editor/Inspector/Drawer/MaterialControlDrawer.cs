@@ -87,7 +87,7 @@ namespace gomoru.su.CostumeController
                 (position, property) => EditorGUI.PropertyField(position, property), 
                 targetMaterials.Where(x => x != null).Any()))
             {
-                var items = targetMaterials.SelectMany(x => x.GetPropertyNames(MaterialPropertyType.Vector)).Select(x => ObjectNames.NicifyVariableName(x)).OrderBy(x => x).ToArray();
+                var items = targetMaterials.SelectMany(x => x.GetPropertyNames(MaterialPropertyType.Vector)).OrderBy(x => x).ToArray();
                 SelectionWindow.Show(items, index => { propertyNameProp.stringValue = items[index]; propertyNameProp.serializedObject.ApplyModifiedProperties(); });
             }
             NewLine(ref position);
