@@ -22,14 +22,11 @@ namespace gomoru.su.CostumeController
 
         public static (float Width, float Height) CalcSize(string text, GUIStyle style) => style.CalcSize(text.ToGUIContent()).AsTuple();
 
-        public static bool ChangeCheck<T>(ref T value, Func<T> func)
+        public static bool ChangeCheck<T>(Func<T> func, out T value)
         {
             EditorGUI.BeginChangeCheck();
-            var ret = func();
-            if (!EditorGUI.EndChangeCheck())
-                return false;
-            value = ret;
-            return true;
+            value = func();
+            return EditorGUI.EndChangeCheck();
         }
         public static void ChangeCheck<T>(SerializedProperty property, Func<T, T> func)
         {

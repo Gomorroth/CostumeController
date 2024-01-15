@@ -49,7 +49,7 @@ namespace gomoru.su.CostumeController
             pos.x += Margin;
             pos.width -= Margin;
 
-            if (GUIUtils.ChangeCheck(ref idx, () => EditorGUI.Popup(pos, idx, OptionalControls.Labels)))
+            if (GUIUtils.ChangeCheck(() => EditorGUI.Popup(pos, idx, OptionalControls.Labels), out idx))
             {
                 property.boxedValue = idx == 0 ? null : Instanciator.Create(OptionalControls.Types[idx - 1]);
                 property.isExpanded = idx != 0;

@@ -85,7 +85,7 @@ namespace gomoru.su.CostumeController
 
             if (GUIUtils.DrawControlWithSelectionButton(position, propertyNameProp, 
                 (position, property) => EditorGUI.PropertyField(position, property), 
-                targetMaterials.Where(x => x != null).Any()))
+                targetMaterials?.Where(x => x != null)?.Any() ?? false))
             {
                 var items = targetMaterials.SelectMany(x => x.GetPropertyNames(MaterialPropertyType.Vector)).OrderBy(x => x).ToArray();
                 SelectionWindow.Show(items, index => { propertyNameProp.stringValue = items[index]; propertyNameProp.serializedObject.ApplyModifiedProperties(); });
