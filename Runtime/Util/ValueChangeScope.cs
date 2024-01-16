@@ -18,4 +18,16 @@ namespace gomoru.su.CostumeController
 
         public void Dispose() => MemoryMarshal.GetReference(span) = value;
     }
+
+    internal readonly struct Disposer : IDisposable
+    {
+        private readonly Action dispose;
+
+        public Disposer(Action dispose)
+        {
+            this.dispose = dispose;
+        }
+
+        public void Dispose() => dispose();
+    }
 }

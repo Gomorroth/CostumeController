@@ -83,7 +83,7 @@ namespace gomoru.su.CostumeController
         {
             var fieldRect = position;
             var popupRect = position;
-            popupRect.width = GUIUtils.CalcSize("Absolute ", EditorStyles.popup).Width;
+            popupRect.width = EditorStyles.popup.CalcSize("Absolute ").Width;
             fieldRect.width -= popupRect.width + Margin;
             popupRect.x += fieldRect.width + Margin;
 

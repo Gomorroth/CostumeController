@@ -20,7 +20,11 @@ namespace gomoru.su.CostumeController
             return content;
         }
 
-        public static (float Width, float Height) CalcSize(string text, GUIStyle style) => style.CalcSize(text.ToGUIContent()).AsTuple();
+        public static (float Width, float Height) CalcSize(this GUIStyle style, string text)
+        {
+            var size = style.CalcSize(text.ToGUIContent());
+            return (size.x, size.y);
+        }
 
         public static bool ChangeCheck<T>(Func<T> func, out T value)
         {

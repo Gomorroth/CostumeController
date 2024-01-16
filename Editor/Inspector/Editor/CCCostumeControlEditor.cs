@@ -1,41 +1,81 @@
 ﻿using gomoru.su.CostumeController.Components.Controls;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace gomoru.su.CostumeController.Inspector
 {
     [CustomEditor(typeof(CCCostumeControl))]
     internal sealed class CCCostumeControlEditor : Editor
     {
-        public void OnEnable()
+        private ReorderableList itemList;
+
+        private void OnEnable()
         {
-            (serializedObject.targetObject as CCCostumeControl).UpdateItems();
+            InitializeItemList();
+        }
+
+        private void InitializeItemList()
+        {
+            itemList = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(CCCostumeControl.Items)))
+            {
+                headerHeight = 0,
+                elementHeightCallback = (index) => GetElementHeight(itemList.serializedProperty.GetArrayElementAtIndex(index)),
+                drawElementCallback = (position, index, active, focused) => OnGUI(position, itemList.serializedProperty.GetArrayElementAtIndex(index)),
+                onAddCallback = static list =>
+                {
+                    using var x = new UndoScope("Add item");
+
+                    int index = list.serializedProperty.arraySize;
+                    list.serializedProperty.InsertArrayElementAtIndex(index);
+                    var newItem = list.serializedProperty.GetArrayElementAtIndex(index);
+                    newItem.FindPropertyRelative(nameof(CCCostumeControl.Item.Object)).objectReferenceValue = null;
+                }
+            };
+
+            float GetElementHeight(SerializedProperty property)
+            {
+                return EditorGUIUtility.singleLineHeight;
+            }
+            
+            void OnGUI(Rect position, SerializedProperty property)
+            {
+                var component = target as CCCostumeControl;
+                position.height = EditorGUIUtility.singleLineHeight;
+
+                var objProp = property.FindPropertyRelative(nameof(CCCostumeControl.Item.Object));
+
+                {
+                    EditorGUI.BeginChangeCheck();
+                    var selected = EditorGUI.ObjectField(position, GUIContent.none, objProp.objectReferenceValue, typeof(SkinnedMeshRenderer), true) as SkinnedMeshRenderer;
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        if (selected == null)
+                        {
+                            objProp.objectReferenceValue = null;
+                        }
+                        else if ((target as Component).gameObject.IsChildren(selected.gameObject) 
+                            && !component.Items.Any(x => x.Object == selected.gameObject))
+                        {
+                            objProp.objectReferenceValue = selected.gameObject;
+                        }
+                    }
+                }
+
+            }
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            var items = serializedObject.FindProperty(nameof(CCCostumeControl.Items));
-            if (items.isExpanded = EditorGUILayout.BeginFoldoutHeaderGroup(items.isExpanded, "Items"))
-            {
-                for (int i = 0; i < items.arraySize; i++)
-                {
-                    var item = items.GetArrayElementAtIndex(i);
-                    var rect = EditorGUILayout.GetControlRect();
-                    EditorGUI.ObjectField(rect, GUIContent.none, item.FindPropertyRelative(nameof(CCCostumeControl.Item.Object)).objectReferenceValue, typeof(SkinnedMeshRenderer), false);
-                    if (item.isExpanded = EditorGUI.Foldout(rect, item.isExpanded, GUIContent.none))
-                    {
-                        EditorGUILayout.BeginHorizontal(GUILayout.Width(100));
-                        EditorGUILayout.PropertyField(item.FindPropertyRelative(nameof(CCCostumeControl.Item.Include)));
-                        EditorGUILayout.PropertyField(item.FindPropertyRelative(nameof(CCCostumeControl.Item.Active)));
-                        EditorGUILayout.PropertyField(item.FindPropertyRelative(nameof(CCCostumeControl.Item.Save)));
-                        EditorGUILayout.PropertyField(item.FindPropertyRelative(nameof(CCCostumeControl.Item.Sync)));
-                        EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.Space();
-                    }
-                }
-            }
-            EditorGUILayout.EndFoldoutHeaderGroup();
+
+            itemList.DoLayoutList();
+
+
             serializedObject.ApplyModifiedProperties();
         }
     }

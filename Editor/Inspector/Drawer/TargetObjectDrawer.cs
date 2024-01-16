@@ -23,7 +23,7 @@ namespace gomoru.su.CostumeController
 
             var objRect = position;
             var toggleRect = position;
-            toggleRect.width = GUIUtils.CalcSize("Absolute", EditorStyles.toggle).Width;
+            toggleRect.width = EditorStyles.toggle.CalcSize("Absolute").Width;
             objRect.width -= toggleRect.width + 8;
             toggleRect.x += objRect.width + 4;
 

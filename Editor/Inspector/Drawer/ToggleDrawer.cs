@@ -17,7 +17,7 @@ namespace gomoru.su.CostumeController
             var fieldRect = position;
 
             labelRect.width = EditorGUIUtility.labelWidth;
-            toggleRect.width = GUIUtils.CalcSize(string.Empty, EditorStyles.toggle).Width;
+            toggleRect.width = EditorStyles.toggle.CalcSize(string.Empty).Width;
             fieldRect.width -= labelRect.width + toggleRect.width + 4;
 
             toggleRect.x += labelRect.width + 2;

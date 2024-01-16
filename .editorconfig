@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS0628: 新規の protected メンバーが sealed 型で宣言されました
+dotnet_diagnostic.CS0628.severity = none
