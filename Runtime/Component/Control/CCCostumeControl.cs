@@ -15,7 +15,7 @@ namespace gomoru.su.CostumeController.Components.Controls
         [SerializeField]
         private bool initialized;
 
-        protected void Start() => Initialize();
+        public void Start() => Initialize();
         public void Reset() => Initialize();
 
         private void Initialize()

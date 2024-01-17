@@ -9,8 +9,6 @@ namespace gomoru.su.CostumeController.Inspector
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(ControllerBase.IsActiveByDefault)), "Active".ToGUIContent());
-            EditorGUILayout.Space();
 
             var name = serializedObject.FindProperty(nameof(ControllerBase.Name));
             EditorGUILayout.PropertyField(name);

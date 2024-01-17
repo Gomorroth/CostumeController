@@ -25,7 +25,7 @@ namespace gomoru.su.CostumeController
                 NewLine(ref position);
             }
 
-            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetTargetGameObject(rootObj);
+            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetObject(rootObj);
             var targetSmr = targetObj == null ? null : targetObj.GetComponent<SkinnedMeshRenderer>();
             var targetMaterials = targetSmr == null ? null : targetSmr.sharedMaterials;
 
@@ -77,7 +77,7 @@ namespace gomoru.su.CostumeController
                 NewLine(ref position);
             }
 
-            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetTargetGameObject(rootObj);
+            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetObject(rootObj);
             var targetRenderer = targetObj == null ? null : targetObj.GetComponent<Renderer>();
             var targetMaterials = targetRenderer == null ? null : targetRenderer.sharedMaterials;
 

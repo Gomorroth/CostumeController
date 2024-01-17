@@ -7,7 +7,6 @@ namespace gomoru.su.CostumeController.Components.Controls
     {
         public string Name;
         public string Group;
-        public bool IsActiveByDefault;
 
         [SerializeReference]
         public List<OptionalControl> OptionalControls;

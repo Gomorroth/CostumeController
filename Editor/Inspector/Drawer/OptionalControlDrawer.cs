@@ -87,39 +87,39 @@ namespace gomoru.su.CostumeController
             fieldRect.width -= popupRect.width + Margin;
             popupRect.x += fieldRect.width + Margin;
 
-
-            var target = container == null ? null : (property.boxedValue as TargetObject).GetTargetGameObject(container);
             var pathProp = property.FindPropertyRelative(nameof(TargetObject.Path));
-            var isAbsoluteProp = property.FindPropertyRelative(nameof(TargetObject.IsAbsolute));
-            if (target != null)
-            {
-                EditorGUI.BeginChangeCheck();
-                var result = EditorGUI.ObjectField(fieldRect, "Target Object", target, filterType ?? typeof(GameObject), true);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    GameObject obj = result switch
-                    {
-                        GameObject x => x,
-                        Component x => x.gameObject,
-                        _ => null,
-                    };
+            var target = (property.boxedValue as TargetObject);
+            bool isAbsolute = target.IsAbsolutePath;
+            var targetObj = container == null ? null : target.GetObject(container);
+            //var isAbsoluteProp = property.FindPropertyRelative(nameof(TargetObject.IsAbsolute));
 
-                    if (obj != null)
+            EditorGUI.BeginChangeCheck();
+            var result = EditorGUI.ObjectField(fieldRect, "Target Object", targetObj, filterType ?? typeof(GameObject), true);
+            if (EditorGUI.EndChangeCheck())
+            {
+                GameObject obj = result switch
+                {
+                    GameObject x => x,
+                    Component x => x.gameObject,
+                    _ => null,
+                };
+
+                if (obj != null)
+                {
+                    if (!container.IsChildren(obj))
                     {
-                        if (!container.IsChildren(obj))
-                        {
-                            isAbsoluteProp.boolValue = true;
-                        }
-                        pathProp.stringValue = obj.GetRelativePath(isAbsoluteProp.boolValue ? container.GetRootObject() : container);
+                        isAbsolute = true;
                     }
+                    pathProp.stringValue = TargetObject.GetTargetPath(container, obj, isAbsolute);
+                    //pathProp.stringValue = obj.GetRelativePath(isAbsoluteProp.boolValue ? container.GetRootObject() : container);
+                }
+                else
+                {
+                    pathProp.stringValue = null;
                 }
             }
-            else
-            {
-                EditorGUI.PropertyField(fieldRect, pathProp, "Target Object".ToGUIContent());
-            }
-
-            GUIUtils.ChangeCheck<bool>(property.FindPropertyRelative(nameof(TargetObject.IsAbsolute)), x => EditorGUI.Popup(popupRect, x ? 1 : 0, new[] { "Relative", "Absolute" }) == 1);
+            EditorGUI.Popup(popupRect, isAbsolute ? 1 : 0, new[] { "Relative", "Absolute" });
+            //GUIUtils.ChangeCheck<bool>(property.FindPropertyRelative(nameof(TargetObject.IsAbsolute)), x => EditorGUI.Popup(popupRect, x ? 1 : 0, new[] { "Relative", "Absolute" }) == 1);
         }
     }
 
