@@ -1,27 +1,45 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using YamlDotNet.Core.Tokens;
 
 namespace gomoru.su.CostumeController
 {
     [Serializable]
     public sealed class TargetObject
     {
-        public string Path;
+        public string Path = RelativePathPrefix;
 
-        public bool IsAbsolutePath => Path.StartsWith("/");
+        private const string AbsolutePathPrefix = "/";
+        private const string RelativePathPrefix = "./";
 
-        public static string GetTargetPath(GameObject container, GameObject target, bool isAbsolute)
+        public PathMode PathMode => IsAbsolutePath(Path) ? PathMode.Absolute : PathMode.Relative;
+
+        public string ChangePathMode(GameObject container, PathMode mode)
         {
+            if (PathMode != mode)
+            {
+                return GetTargetPath(container, GetObject(container), mode);
+            }
+            return Path;
+        }
+
+        public static string GetTargetPath(GameObject container, GameObject target, PathMode pathMode = PathMode.Relative)
+        {
+            bool isAbsolute = pathMode is PathMode.Absolute;
+            var prefix = isAbsolute ? AbsolutePathPrefix : RelativePathPrefix;
             var root = isAbsolute ? container.GetRootObject() : container;
             if (root == target)
             {
-                return isAbsolute ? "/" : "./";
+                return prefix;
             }
 
             var path = target.GetRelativePath(root);
-            return (isAbsolute ? "/" : "./") + path; 
+            if (path is null)
+                return null;
+            return prefix + path; 
         }
 
         public GameObject GetObject(GameObject container)
@@ -29,15 +47,21 @@ namespace gomoru.su.CostumeController
             if (container == null || string.IsNullOrEmpty(Path))
                 return null;
 
-            if (Path == "/")
+            if (Path is AbsolutePathPrefix)
                 return container.GetRootObject();
-            else if (Path == "./")
+            else if (Path is RelativePathPrefix)
                 return container;
 
-            bool isAbsolute = Path.StartsWith("/");
+            bool isAbsolute = IsAbsolutePath(Path);
             var root = isAbsolute ? container.GetRootObject() : container;
-            Debug.Log(root.Find(Path[(isAbsolute ? 1 : 2)..]));
             return root.Find(Path[(isAbsolute ? 1 : 2)..]);
+        }
+
+        private static bool IsAbsolutePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return false;
+            return path[0] == '/';
         }
     }
 }

@@ -89,7 +89,7 @@ namespace gomoru.su.CostumeController
 
             var pathProp = property.FindPropertyRelative(nameof(TargetObject.Path));
             var target = (property.boxedValue as TargetObject);
-            bool isAbsolute = target.IsAbsolutePath;
+            var mode = target.PathMode;
             var targetObj = container == null ? null : target.GetObject(container);
             //var isAbsoluteProp = property.FindPropertyRelative(nameof(TargetObject.IsAbsolute));
 
@@ -108,9 +108,9 @@ namespace gomoru.su.CostumeController
                 {
                     if (!container.IsChildren(obj))
                     {
-                        isAbsolute = true;
+                        mode = PathMode.Absolute;
                     }
-                    pathProp.stringValue = TargetObject.GetTargetPath(container, obj, isAbsolute);
+                    pathProp.stringValue = TargetObject.GetTargetPath(container, obj, mode);
                     //pathProp.stringValue = obj.GetRelativePath(isAbsoluteProp.boolValue ? container.GetRootObject() : container);
                 }
                 else
@@ -118,7 +118,13 @@ namespace gomoru.su.CostumeController
                     pathProp.stringValue = null;
                 }
             }
-            EditorGUI.Popup(popupRect, isAbsolute ? 1 : 0, new[] { "Relative", "Absolute" });
+
+            EditorGUI.BeginChangeCheck();
+            mode = (PathMode)EditorGUI.Popup(popupRect, (int)mode, new[] { "Relative", "Absolute" });
+            if (EditorGUI.EndChangeCheck())
+            {
+                pathProp.stringValue = target.ChangePathMode(container, mode);
+            }
             //GUIUtils.ChangeCheck<bool>(property.FindPropertyRelative(nameof(TargetObject.IsAbsolute)), x => EditorGUI.Popup(popupRect, x ? 1 : 0, new[] { "Relative", "Absolute" }) == 1);
         }
     }
