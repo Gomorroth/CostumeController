@@ -21,7 +21,7 @@ namespace gomoru.su.CostumeController
 
             if (ShowTargetObjectField)
             {
-                DrawTargetObject(position, targetObjectProp, rootObj, typeof(SkinnedMeshRenderer));
+                GUIUtils.DrawTargetObject(position, targetObjectProp, rootObj, typeof(SkinnedMeshRenderer));
                 NewLine(ref position);
             }
 
@@ -73,7 +73,7 @@ namespace gomoru.su.CostumeController
 
             if (ShowTargetObjectField)
             {
-                DrawTargetObject(position, targetObjectProp, rootObj, typeof(Renderer));
+                GUIUtils.DrawTargetObject(position, targetObjectProp, rootObj, typeof(Renderer));
                 NewLine(ref position);
             }
 

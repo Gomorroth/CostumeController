@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using gomoru.su.CostumeController.Controls;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -79,54 +81,6 @@ namespace gomoru.su.CostumeController
             position.y += EditorGUIUtility.singleLineHeight + Margin;
         }
 
-        public static void DrawTargetObject(Rect position, SerializedProperty property, GameObject container = null, Type filterType = null)
-        {
-            var fieldRect = position;
-            var popupRect = position;
-            popupRect.width = EditorStyles.popup.CalcSize("Absolute ").Width;
-            fieldRect.width -= popupRect.width + Margin;
-            popupRect.x += fieldRect.width + Margin;
-
-            var pathProp = property.FindPropertyRelative(nameof(TargetObject.Path));
-            var target = (property.boxedValue as TargetObject);
-            var mode = target.PathMode;
-            var targetObj = container == null ? null : target.GetObject(container);
-            //var isAbsoluteProp = property.FindPropertyRelative(nameof(TargetObject.IsAbsolute));
-
-            EditorGUI.BeginChangeCheck();
-            var result = EditorGUI.ObjectField(fieldRect, "Target Object", targetObj, filterType ?? typeof(GameObject), true);
-            if (EditorGUI.EndChangeCheck())
-            {
-                GameObject obj = result switch
-                {
-                    GameObject x => x,
-                    Component x => x.gameObject,
-                    _ => null,
-                };
-
-                if (obj != null)
-                {
-                    if (!container.IsChildren(obj))
-                    {
-                        mode = PathMode.Absolute;
-                    }
-                    pathProp.stringValue = TargetObject.GetTargetPath(container, obj, mode);
-                    //pathProp.stringValue = obj.GetRelativePath(isAbsoluteProp.boolValue ? container.GetRootObject() : container);
-                }
-                else
-                {
-                    pathProp.stringValue = null;
-                }
-            }
-
-            EditorGUI.BeginChangeCheck();
-            mode = (PathMode)EditorGUI.Popup(popupRect, (int)mode, new[] { "Relative", "Absolute" });
-            if (EditorGUI.EndChangeCheck())
-            {
-                pathProp.stringValue = target.ChangePathMode(container, mode);
-            }
-            //GUIUtils.ChangeCheck<bool>(property.FindPropertyRelative(nameof(TargetObject.IsAbsolute)), x => EditorGUI.Popup(popupRect, x ? 1 : 0, new[] { "Relative", "Absolute" }) == 1);
-        }
     }
 
     internal abstract class OptionalControlDrawer<TControl, TDrawer> : OptionalControlDrawer

@@ -17,7 +17,7 @@ namespace gomoru.su.CostumeController
 
             if (ShowTargetObjectField)
             {
-                DrawTargetObject(position, targetObjectProp, rootObj, typeof(GameObject));
+                GUIUtils.DrawTargetObject(position, targetObjectProp, rootObj, typeof(GameObject));
                 NewLine(ref position);
             }
 

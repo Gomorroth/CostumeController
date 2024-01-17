@@ -63,5 +63,11 @@ namespace gomoru.su.CostumeController
                 return false;
             return path[0] == '/';
         }
+
+        public TargetObject() { }
+
+        public TargetObject(GameObject container, GameObject target) => Path = GetTargetPath(container, target, container.IsChildren(target) ? PathMode.Relative : PathMode.Absolute);
+
+        public TargetObject(GameObject container, GameObject target, PathMode mode) => Path = GetTargetPath(container, target, mode);
     }
 }

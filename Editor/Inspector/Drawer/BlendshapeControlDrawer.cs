@@ -18,7 +18,7 @@ namespace gomoru.su.CostumeController
 
             if (ShowTargetObjectField)
             {
-                DrawTargetObject(position, targetObjectProp, rootObj, typeof(SkinnedMeshRenderer));
+                GUIUtils.DrawTargetObject(position, targetObjectProp, rootObj, typeof(SkinnedMeshRenderer));
                 NewLine(ref position);
             }
 

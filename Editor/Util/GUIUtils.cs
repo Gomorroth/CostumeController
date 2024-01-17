@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Drawing.Printing;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -41,6 +45,56 @@ namespace gomoru.su.CostumeController
                 typed.Value = ret;
         }
 
+
+        public static void DrawTargetObject(Rect position, SerializedProperty property, GameObject container = null, Type filterType = null)
+        {
+            var fieldRect = position;
+            var popupRect = position;
+            popupRect.width = EditorStyles.popup.CalcSize("Absolute ").Width;
+            fieldRect.width -= popupRect.width + 2;
+            popupRect.x += fieldRect.width + 2;
+
+            var pathProp = property.FindPropertyRelative(nameof(TargetObject.Path));
+            var target = (property.boxedValue as TargetObject);
+            var mode = target.PathMode;
+            var targetObj = container == null ? null : target.GetObject(container);
+            //var isAbsoluteProp = property.FindPropertyRelative(nameof(TargetObject.IsAbsolute));
+
+            EditorGUI.BeginChangeCheck();
+            var result = EditorGUI.ObjectField(fieldRect, "Target Object", targetObj, filterType ?? typeof(GameObject), true);
+            if (EditorGUI.EndChangeCheck())
+            {
+                GameObject obj = result switch
+                {
+                    GameObject x => x,
+                    Component x => x.gameObject,
+                    _ => null,
+                };
+
+                if (obj != null)
+                {
+                    if (!container.IsChildren(obj))
+                    {
+                        mode = PathMode.Absolute;
+                    }
+                    pathProp.stringValue = TargetObject.GetTargetPath(container, obj, mode);
+                    //pathProp.stringValue = obj.GetRelativePath(isAbsoluteProp.boolValue ? container.GetRootObject() : container);
+                }
+                else
+                {
+                    pathProp.stringValue = null;
+                }
+            }
+
+            EditorGUI.BeginChangeCheck();
+            mode = (PathMode)EditorGUI.Popup(popupRect, (int)mode, new[] { "Relative", "Absolute" });
+            if (EditorGUI.EndChangeCheck())
+            {
+                pathProp.stringValue = target.ChangePathMode(container, mode);
+            }
+            //GUIUtils.ChangeCheck<bool>(property.FindPropertyRelative(nameof(TargetObject.IsAbsolute)), x => EditorGUI.Popup(popupRect, x ? 1 : 0, new[] { "Relative", "Absolute" }) == 1);
+        }
+
         public static bool DrawControlWithSelectionButton(Rect position, Action<Rect> drawControl) => DrawControlWithSelectionButton(position, drawControl, static (pos, action) => action(pos));
 
         public static bool DrawControlWithSelectionButton<TState>(Rect position, TState state, Action<Rect, TState> drawControl, bool? enabled = null)
@@ -76,5 +130,36 @@ namespace gomoru.su.CostumeController
             }
             drawControl(position, state);
         }
+
+        public static float GetHeight(SerializedProperty property, GUIContent label, bool includeChildren)
+        {
+            if (getHeightInternal == null)
+            {
+                var method = new DynamicMethod("", typeof(float), new[] { typeof(SerializedProperty), typeof(GUIContent), typeof(bool)});
+                var il = method.GetILGenerator();
+                var assembly = typeof(EditorGUI).Assembly;
+                var types = assembly.GetTypes();
+                var scriptAttributeUtilityType = types.FirstOrDefault(x => x.Name == "ScriptAttributeUtility");
+                var propertyHandlerType = types.FirstOrDefault(x => x.Name == "PropertyHandler");
+
+                // var handler = ScriptAttributeUtility.GetHandler(property);
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Call, scriptAttributeUtilityType.GetMethod("GetHandler", BindingFlags.NonPublic | BindingFlags.Static));
+
+                // return handler.GetHeight(property, label, includeChildren);
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Ldarg_1);
+                il.Emit(OpCodes.Ldarg_2);
+                il.Emit(OpCodes.Callvirt, propertyHandlerType.GetMethod("GetHeight", BindingFlags.Public | BindingFlags.Instance));
+                il.Emit(OpCodes.Ret);
+
+
+                getHeightInternal = method.CreateDelegate(typeof(Func<SerializedProperty, GUIContent, bool, float>)) as Func<SerializedProperty, GUIContent, bool, float>;
+            }
+
+            return getHeightInternal(property, label, includeChildren);
+        }
+
+        private static Func<SerializedProperty, GUIContent, bool, float> getHeightInternal;
     }
 }
