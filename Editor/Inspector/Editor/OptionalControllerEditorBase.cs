@@ -12,9 +12,7 @@ namespace gomoru.su.CostumeController.Inspector
 
             var name = serializedObject.FindProperty(nameof(ControllerBase.Name));
             EditorGUILayout.PropertyField(name);
-            if (string.IsNullOrEmpty(name.stringValue))
-                name.stringValue = serializedObject.targetObject.name;
-            GUIUtils.DrawControlWithSelectionButton(EditorGUILayout.GetControlRect(), serializedObject.FindProperty(nameof(ControllerBase.Group)), (position, property) => EditorGUI.PropertyField(position, property));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(ControllerBase.Group)));
 
             EditorGUILayout.Space();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Reflection;
@@ -45,6 +46,45 @@ namespace gomoru.su.CostumeController
                 typed.Value = ret;
         }
 
+        public static void DrawGroupSelectionField(Rect position, SerializedProperty property, GameObject gameObject)
+        {
+            if (DrawControlWithSelectionButton(position, property, (position, property) => EditorGUI.PropertyField(position, property)))
+            {
+                var items = gameObject.GetRootObject().GetComponentsInChildren<IParameterNamesProvider>(true);
+                var list = ValueList<(string Group, string Name)>.Create(64);
+                foreach(var item in items )
+                {
+                    item.GetParameterNames(ref list);
+                }
+
+                var span = list.Span;
+                var buffer = ArrayPool<string>.Shared.Rent(span.Length);
+                int count = 0;
+                var current = property.stringValue;
+                _ = buffer.Length;
+                for(int i = 0; i < span.Length; i++)
+                {
+                    var group = span[i].Group;
+                    if (string.IsNullOrEmpty(group) || group == current || buffer.AsSpan(0, count).IndexOf(group) != -1) 
+                        continue;
+
+                    buffer[count++] = group;
+                }
+                var labels = buffer.AsMemory(0, count);
+
+                list.Dispose();
+
+                if (labels.IsEmpty)
+                    return;
+
+                SelectionWindow.Show(labels, title: "Select Group", callback: i =>
+                {
+                    property.stringValue = labels.Span[i];
+                    property.serializedObject.ApplyModifiedProperties();
+                    ArrayPool<string>.Shared.Return(buffer);
+                });
+            }
+        }
 
         public static void DrawTargetObject(Rect position, SerializedProperty property, GameObject container = null, Type filterType = null)
         {
@@ -54,8 +94,8 @@ namespace gomoru.su.CostumeController
             fieldRect.width -= popupRect.width + 2;
             popupRect.x += fieldRect.width + 2;
 
-            var pathProp = property.FindPropertyRelative(nameof(TargetObject.Path));
-            var target = (property.boxedValue as TargetObject);
+            var pathProp = property.FindPropertyRelative(nameof(ObjectPath.Path));
+            var target = (property.boxedValue as ObjectPath);
             var mode = target.PathMode;
             var targetObj = container == null ? null : target.GetObject(container);
             //var isAbsoluteProp = property.FindPropertyRelative(nameof(TargetObject.IsAbsolute));
@@ -77,7 +117,7 @@ namespace gomoru.su.CostumeController
                     {
                         mode = PathMode.Absolute;
                     }
-                    pathProp.stringValue = TargetObject.GetTargetPath(container, obj, mode);
+                    pathProp.stringValue = ObjectPath.GetTargetPath(container, obj, mode);
                     //pathProp.stringValue = obj.GetRelativePath(isAbsoluteProp.boolValue ? container.GetRootObject() : container);
                 }
                 else

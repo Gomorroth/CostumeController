@@ -22,7 +22,7 @@ namespace gomoru.su.CostumeController
                 NewLine(ref position);
             }
 
-            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetObject(rootObj);
+            var targetObj = (targetObjectProp.boxedValue as ObjectPath).GetObject(rootObj);
             var targetSmr = targetObj == null ? null : targetObj.GetComponent<SkinnedMeshRenderer>();
             var targetMesh = targetSmr == null ? null : targetSmr.sharedMesh;
 

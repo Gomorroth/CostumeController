@@ -3,7 +3,7 @@
 namespace gomoru.su.CostumeController.Components.Controls
 {
     [AddComponentMenu("Costume Controller/Control/CC Toggle Control")]
-    public sealed class CCToggleControl : ControllerBase
+    public sealed class CCToggleControl : OptionalControllerBase<ToggleObjectControl>
     {
 
     }

@@ -8,7 +8,7 @@ using YamlDotNet.Core.Tokens;
 namespace gomoru.su.CostumeController
 {
     [Serializable]
-    public sealed class TargetObject
+    public sealed class ObjectPath
     {
         public string Path = RelativePathPrefix;
 
@@ -64,10 +64,12 @@ namespace gomoru.su.CostumeController
             return path[0] == '/';
         }
 
-        public TargetObject() { }
+        public ObjectPath() { }
 
-        public TargetObject(GameObject container, GameObject target) => Path = GetTargetPath(container, target, container.IsChildren(target) ? PathMode.Relative : PathMode.Absolute);
+        public ObjectPath(string path) => Path = path;
 
-        public TargetObject(GameObject container, GameObject target, PathMode mode) => Path = GetTargetPath(container, target, mode);
+        public ObjectPath(GameObject container, GameObject target) => Path = GetTargetPath(container, target, container.IsChildren(target) ? PathMode.Relative : PathMode.Absolute);
+
+        public ObjectPath(GameObject container, GameObject target, PathMode mode) => Path = GetTargetPath(container, target, mode);
     }
 }

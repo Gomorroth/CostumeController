@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using gomoru.su.CostumeController.Controls;
 using UnityEditor;
 using UnityEngine;
@@ -25,7 +26,7 @@ namespace gomoru.su.CostumeController
                 NewLine(ref position);
             }
 
-            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetObject(rootObj);
+            var targetObj = (targetObjectProp.boxedValue as ObjectPath).GetObject(rootObj);
             var targetSmr = targetObj == null ? null : targetObj.GetComponent<SkinnedMeshRenderer>();
             var targetMaterials = targetSmr == null ? null : targetSmr.sharedMaterials;
 
@@ -77,7 +78,7 @@ namespace gomoru.su.CostumeController
                 NewLine(ref position);
             }
 
-            var targetObj = (targetObjectProp.boxedValue as TargetObject).GetObject(rootObj);
+            var targetObj = (targetObjectProp.boxedValue as ObjectPath).GetObject(rootObj);
             var targetRenderer = targetObj == null ? null : targetObj.GetComponent<Renderer>();
             var targetMaterials = targetRenderer == null ? null : targetRenderer.sharedMaterials;
 
@@ -87,8 +88,8 @@ namespace gomoru.su.CostumeController
                 (position, property) => EditorGUI.PropertyField(position, property), 
                 targetMaterials?.Where(x => x != null)?.Any() ?? false))
             {
-                var items = targetMaterials.SelectMany(x => x.GetPropertyNames(MaterialPropertyType.Vector)).OrderBy(x => x).ToArray();
-                SelectionWindow.Show(items, index => { propertyNameProp.stringValue = items[index]; propertyNameProp.serializedObject.ApplyModifiedProperties(); });
+                var items = targetMaterials.SelectMany(x => x.GetPropertyNames(MaterialPropertyType.Vector)).OrderBy(x => x).ToArray().AsMemory();
+                SelectionWindow.Show(items, index => { propertyNameProp.stringValue = items.Span[index]; propertyNameProp.serializedObject.ApplyModifiedProperties(); });
             }
             NewLine(ref position);
 

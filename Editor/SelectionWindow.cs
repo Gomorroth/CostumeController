@@ -23,7 +23,7 @@ namespace gomoru.su.CostumeController
 
         private Vector2 scrollPosition;
 
-        public static void Show<T>(IEnumerable<T> items, Action<int> callback, string title = null)
+        public static void Show<T>(IEnumerable<T> items, Action<int> callback, string title = null, Func<T, string> factory = null)
         {
             using var list =
                 typeof(T).IsValueType &&
@@ -36,10 +36,13 @@ namespace gomoru.su.CostumeController
                 list.Add(item);
             }
 
-            Show<T>(list.Span, callback, title);
+            Show((ReadOnlySpan<T>)list.Span, callback, title, factory);
         }
 
-        public static void Show<T>(ReadOnlySpan<T> items, Action<int> callback, string title = null)
+        public static void Show<T>(Span<T> items, Action<int> callback, string title = null, Func<T, string> factory = null)
+            => Show((ReadOnlySpan<T>)items, callback, title, factory);
+
+        public static void Show<T>(ReadOnlySpan<T> items, Action<int> callback, string title = null, Func<T, string> factory = null)
         {
             var window = Current;
             if (window == null)
@@ -47,7 +50,21 @@ namespace gomoru.su.CostumeController
                 Current = window = CreateWindow<SelectionWindow>();
             }
 
-            window.Initialize(items, callback);
+            window.Initialize(items, callback, factory);
+            window.titleContent = new(title ?? "Select");
+            window.Show();
+        }
+
+        public static void Show(ReadOnlyMemory<string> items, Action<int> callback, string title = null)
+        {
+            var window = Current;
+            if (window == null)
+            {
+                Current = window = CreateWindow<SelectionWindow>();
+            }
+
+            window.labels = items;
+            window.callback = callback;
             window.titleContent = new(title ?? "Select");
             window.Show();
         }
@@ -94,7 +111,7 @@ namespace gomoru.su.CostumeController
 
                 if (GUILayout.Button(item))
                 {
-                    callback(i);
+                    callback?.Invoke(i);
                     Close();
                 }
             }
@@ -110,6 +127,9 @@ namespace gomoru.su.CostumeController
         public void OnDestroy()
         {
             Current = null;
+            if (buffer is null)
+                return;
+
             ArrayPool<string>.Shared.Return(buffer);
             buffer = null;
         }

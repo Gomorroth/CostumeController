@@ -103,6 +103,8 @@ namespace gomoru.su.CostumeController.Inspector
         {
             serializedObject.Update();
 
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(CCCostumeControl.Group)));
+            //GUIUtils.DrawGroupSelectionField(EditorGUILayout.GetControlRect(), serializedObject.FindProperty(nameof(CCCostumeControl.Group)), (target as Component).gameObject);
             itemList.DoLayoutList();
 
 

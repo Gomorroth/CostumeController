@@ -17,5 +17,15 @@ namespace gomoru.su.CostumeController
 
             return default;
         }
+
+        public static TResult[] Select<T, TResult>(this Span<T> span, Func<T, TResult> factory)
+        {
+            var result = new TResult[span.Length];
+            for(int i = 0; i < span.Length; i++)
+            {
+                result[i] = factory(span[i]);
+            }
+            return result;
+        }
     }
 }
