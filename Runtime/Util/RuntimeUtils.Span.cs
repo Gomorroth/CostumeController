@@ -27,5 +27,15 @@ namespace gomoru.su.CostumeController
             }
             return result;
         }
+
+        public static int IndexOf<T>(this Span<T> span, Predicate<T> predicate)
+        {
+            for (int i = 0; i < span.Length; i++)
+            {
+                if (predicate(span[i]))
+                    return i;
+            }
+            return -1;
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using System.Linq;
+using System;
 
 namespace gomoru.su.CostumeController.Inspector
 {
@@ -37,7 +39,15 @@ namespace gomoru.su.CostumeController.Inspector
                 var component = target as Target;
                 position.height = EditorGUIUtility.singleLineHeight;
 
-                GUIUtils.DrawControlWithSelectionButton(position, position => GUI.Button(position, property.displayName.ToGUIContent(image: AssetPreview.GetMiniTypeThumbnail(typeof(GameObject))), EditorStyles.objectField));
+                var items = component.gameObject.GetRootObject().GetComponentsInChildren<IParameterNamesProvider>().SelectMany(x => x.GetParameterNames()).Distinct().Select(x => new GUIContent($"{x.Group}/{x.Name}", AssetPreview.GetMiniTypeThumbnail(typeof(GameObject)))).ToArray();
+                var idx = items.AsSpan().IndexOf(x => x.text == property.stringValue);
+                
+                EditorGUI.BeginChangeCheck();
+                idx = EditorGUI.Popup(position, GUIContent.none, idx, items, EditorStyles.objectField);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    property.stringValue = items[idx].text;
+                }
 
             }
         }
